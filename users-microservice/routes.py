@@ -24,3 +24,10 @@ def register():
     db.session.commit()
 
     return jsonify({"msg": "User registered successfully"}), 201
+
+
+@auth_bp.route('/all_users', methods=['GET'])
+def get_all_users():
+    users = User.query.all()
+    user_list = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
+    return jsonify(user_list), 200
