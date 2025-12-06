@@ -1,6 +1,6 @@
 services:
   auth-db:
-    image: postgres:latest
+    image: postgres:17
     container_name: ecommerce-auth-db
     hostname: ecommerce-auth-db
     environment:

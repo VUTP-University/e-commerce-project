@@ -24,3 +24,22 @@ def register():
     db.session.commit()
 
     return jsonify({"msg": "User registered successfully"}), 201
+
+@auth_bp.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"msg": "Missing required fields"}), 400
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.password, password):
+        token = generate_token(identity=user.id)
+        return jsonify({"token": token,
+                        "user_id": user.id,
+                        "username": user.username}), 200
+
+    return jsonify({"msg": "Invalid credentials"}), 401
