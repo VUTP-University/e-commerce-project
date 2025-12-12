@@ -1,0 +1,28 @@
+services:
+  auth-db:
+    image: postgres:17
+    container_name: ecommerce-inventory-db
+    hostname: ecommerce-inventory-db
+    environment:
+      POSTGRES_USER: ${INV_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${INV_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${INV_POSTGRES_DBNAME}
+      TZ: Europe/Sofia
+    ports:
+      - "5451:5432"
+    volumes:
+      - ecommerce-inventory-db:/var/lib/postgresql/data
+    networks:
+      - ecommerce
+
+
+
+volumes:
+  ecommerce-inventory-db:
+    driver: local
+    name: ecommerce-inventory-db
+
+networks:
+  ecommerce:
+    driver: bridge
+    name: ecommerce
