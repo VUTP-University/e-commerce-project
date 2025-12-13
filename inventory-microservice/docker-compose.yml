@@ -1,5 +1,5 @@
 services:
-  auth-db:
+  inventory-db:
     image: postgres:17
     container_name: ecommerce-inventory-db
     hostname: ecommerce-inventory-db

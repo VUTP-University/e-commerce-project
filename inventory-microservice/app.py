@@ -1,6 +1,7 @@
 from flask import Flask
 from config import Config
 from extensions import db, jwt, migrate
+from routes import inventory_bp
 
 
 def create_app():
@@ -11,6 +12,8 @@ def create_app():
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+    
+    app.register_blueprint(inventory_bp)
     
     with app.app_context():
         from models import Inventory  # Import models to register them with SQLAlchemy
