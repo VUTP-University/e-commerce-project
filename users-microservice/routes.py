@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 # Auth Blueprint
 auth_bp = Blueprint('auth', __name__)
+# Address Blueprint
+address_bp = Blueprint('address', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
@@ -31,7 +33,31 @@ def register():
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    email = data.get('email')
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"msg": "Missing required fields"}), 400
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.password, password):
+        token = generate_token(identity=user.id)
+        return jsonify({"token": token,
+                        "user_id": user.id,
+                        "username": user.username}), 200
+
+    return jsonify({"msg": "Invalid credentials"}), 401
+
+
+@auth_bp.route('/all_users', methods=['GET'])
+def get_all_users():
+    users = User.query.all()
+    user_list = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
+    return jsonify(user_list), 200
+
+  
+      email = data.get('email')
     password = data.get('password')
 
     if not email or not password:
@@ -45,9 +71,6 @@ def login():
     access_token = generate_token(identity=user.id)
     return jsonify({"access_token": access_token, "msg": "Login successful"}), 200
 
-
-# Address Blueprint
-address_bp = Blueprint('address', __name__)
 
 @address_bp.route('/addresses', methods=['POST'])
 @jwt_required()
