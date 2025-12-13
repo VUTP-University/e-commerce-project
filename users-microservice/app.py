@@ -12,12 +12,13 @@ def create_app():
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    # Register blueprints or routes here
-    from routes import auth_bp
+    # Register blueprints
+    from routes import auth_bp, address_bp
     app.register_blueprint(auth_bp)
+    app.register_blueprint(address_bp)
     
     with app.app_context():
-        from models import User  # Import models to register them with SQLAlchemy
+        from models import User, Address  # Import models to register them with SQLAlchemy
         db.create_all()  # Create database tables
 
     return app
