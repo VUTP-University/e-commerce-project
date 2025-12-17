@@ -1,0 +1,19 @@
+person:
+  first_name: Ivan # ключ-стойност
+  last_name: Petrov # ключ-стойност
+  contact:          # обект (Map)
+    email: ivan.petrov@example.com
+    phone: "+359888123456"
+  skills:        # списък (List)
+    - Python
+    - Java
+    - Git
+  address:       # Списък от обекти (List of Maps)
+    - home:
+        street: "Main St 123"
+        city: "Sofia"
+        postal_code: "1000"
+    - work:
+        street: "Business Ave 45"
+        city: "Sofia"
+        postal_code: "1400"
