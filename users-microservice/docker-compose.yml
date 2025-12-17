@@ -15,6 +15,25 @@ services:
     networks:
       - ecommerce
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
+    container_name: ecommerce-auth-service
+    environment:
+      FLASK_ENV: production
+      SQLALCHEMY_DATABASE_URI: postgresql://${AUTH_POSTGRES_USER}:${AUTH_POSTGRES_PASSWORD}@auth-db:5432/${AUTH_POSTGRES_DBNAME}
+    depends_on:
+      - auth-db
+    ports:
+      - "80:5000"
+    networks:
+      - ecommerce
+    restart: unless-stopped
+
 
 
 volumes:
