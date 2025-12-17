@@ -1,0 +1,27 @@
+services:
+  orders-db:
+    image: postgres:17
+    container_name: ecommerce-orders-db
+    hostname: ecommerce-orders-db
+    environment:
+      POSTGRES_USER: ${AUTH_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AUTH_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${AUTH_POSTGRES_DBNAME}
+      TZ: Europe/Sofia
+    ports:
+      - "5452:5432"
+    volumes:
+      - ecommerce-orders-db:/var/lib/postgresql/data
+    networks:
+      - ecommerce
+
+ 
+volumes:
+  ecommerce-orders-db:
+    driver: local
+    name: ecommerce-orders-db
+
+networks:
+  ecommerce:
+    driver: bridge
+    name: ecommerce
