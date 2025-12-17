@@ -56,21 +56,6 @@ def get_all_users():
     user_list = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
     return jsonify(user_list), 200
 
-  
-    # email = data.get('email')
-    # password = data.get('password')
-
-    # if not email or not password:
-    #     return jsonify({"msg": "Missing email or password"}), 400
-
-    # user = User.query.filter_by(email=email).first()
-
-    # if not user or not check_password_hash(user.password, password):
-    #     return jsonify({"msg": "Invalid credentials"}), 401
-
-    # access_token = generate_token(identity=user.id)
-    # return jsonify({"access_token": access_token, "msg": "Login successful"}), 200
-
 
 @address_bp.route('/addresses', methods=['POST'])
 @jwt_required()
