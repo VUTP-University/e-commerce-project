@@ -1,0 +1,42 @@
+services:
+  product-db:
+    image: postgres:17
+    container_name: ecommerce-product-db
+    hostname: ecommerce-product-db
+    environment:
+      POSTGRES_USER: ${PRODUCT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PRODUCT_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${PRODUCT_POSTGRES_DBNAME}
+      TZ: Europe/Sofia
+    ports:
+      - "5451:5432"
+    volumes:
+      - ecommerce-product-db:/var/lib/postgresql/data
+    networks:
+      - ecommerce
+
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce-product-service
+    environment:
+      FLASK_ENV: production
+      SQLALCHEMY_DATABASE_URI: postgresql://${PRODUCT_POSTGRES_USER}:${PRODUCT_POSTGRES_PASSWORD}@product-db:5432/${PRODUCT_POSTGRES_DBNAME}
+    depends_on:
+      - product-db
+    ports:
+      - "81:5000"
+    networks:
+      - ecommerce
+    restart: unless-stopped
+
+volumes:
+  ecommerce-product-db:
+    driver: local
+    name: ecommerce-product-db
+
+networks:
+  ecommerce:
+    external: true
+    name: ecommerce
