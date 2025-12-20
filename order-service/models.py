@@ -12,7 +12,8 @@ class Order(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     modified_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
     
-    def __init__(self, products, status='pending'):
+    def __init__(self, user_id, products, status='pending'):
+        self.user_id = user_id
         self.products = products
         self.status = status
         
