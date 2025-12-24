@@ -1,35 +1,46 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy.exc import IntegrityError
-from extensions import db
-from models import Product
+from services import increase_stock, decrease_stock
 
 product_bp = Blueprint("product_bp", __name__)
 
 
-@product_bp.route("/products", methods=["POST"])
-def create_product():
+@product_bp.route("/products/<string:sku>/increase", methods=["POST"])
+def increase_stock_route(sku):
     data = request.get_json()
+    amount = data.get("amount")
 
-    sku = data["sku"].strip().upper()
-    name = data["name"].strip()
-    stock = int(data["stock"])
-
-    product = Product(sku=sku, name=name, stock=stock)
+    if amount is None:
+        return jsonify({"error": "Amount is required"}), 400
 
     try:
-        db.session.add(product)
-        db.session.commit()
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify({"error": "Product with this SKU already exists"}), 409
+        product = increase_stock(sku, amount)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except LookupError as e:
+        return jsonify({"error": str(e)}), 404
 
-    return jsonify({"message": "Product created"}), 201
+    return jsonify({
+        "sku": product.sku,
+        "stock": product.stock
+    }), 200
 
 
-@product_bp.route("/products", methods=["GET"])
-def list_products():
-    products = Product.query.all()
-    return jsonify([
-        {"sku": p.sku, "name": p.name, "stock": p.stock}
-        for p in products
-    ])
+@product_bp.route("/products/<string:sku>/decrease", methods=["POST"])
+def decrease_stock_route(sku):
+    data = request.get_json()
+    amount = data.get("amount")
+
+    if amount is None:
+        return jsonify({"error": "Amount is required"}), 400
+
+    try:
+        product = decrease_stock(sku, amount)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except LookupError as e:
+        return jsonify({"error": str(e)}), 404
+
+    return jsonify({
+        "sku": product.sku,
+        "stock": product.stock
+    }), 200
